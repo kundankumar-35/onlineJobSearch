@@ -48,22 +48,30 @@ router.post('/new-job', async (req, res) => {
         await newjob.save()
         res.status(201).json({ message : " job post successfully"})
     } catch (e) {
+        console.log(e.message)
         res.status(500).json({error : "failed to post job"})
     }
 })
 
 // post new application for jobs
-router.post('/all-jobs/:jobId/apply', async (req, res) => {
+router.post('/apply', async (req, res) => {
     try {
 
-        const jobId = req.params.jobId
+        const jobId = req.query.jobId
+        const jobTitle = req.query.jobTitle
+
         const newjob = new Application({
             ...req.body,
-            jobId : jobId
+            jobId: jobId,
+            title : jobTitle
+            
         })
+        // console.log(newjob)
         await newjob.save()
+        // console.log(jobId , jobTitle)
         res.status(201).json({ message : "Application post successfully"})
     } catch (e) {
+        console.log(e.message)
         res.status(500).json({error : "failed to post job"})
     }
 })

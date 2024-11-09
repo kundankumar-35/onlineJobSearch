@@ -41,8 +41,13 @@ const JobList = () => {
         e.preventDefault();
         try {
             const { data } = await axios.post(
-                `http://localhost:4000/api/jobs/all-jobs/${selectedJob.jobId}/apply`,
-                applicationData
+                `http://localhost:4000/api/jobs/apply`,
+                applicationData, {
+                    params: {
+                        jobId: selectedJob.jobId,
+                        jobTitle : selectedJob.title
+                    }
+                }
             );
             toast.success(data.message || "Application submitted successfully!");
             setApplicationData({ applicantName: '', applicantEmail: '', resume: '' });

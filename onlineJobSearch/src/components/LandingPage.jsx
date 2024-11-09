@@ -1,5 +1,7 @@
 import React  ,{ useEffect  ,useState} from 'react';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -28,8 +30,9 @@ const LandingPage = () => {
         const fetchJobs = async () => {
             try {
                
-                // const  data  = await axios.get('http://localhost:4000/api/jobs/all-jobs');
-                // setJobs(data);
+                const  response  = await axios.get('http://localhost:4000/api/jobs/all-jobs');
+                setJobs(response.data);
+                console.log(response.data)
             } catch (error) {
                 console.error('Failed to fetch jobs:', error);
                
@@ -56,8 +59,13 @@ const LandingPage = () => {
         e.preventDefault();
         try {
             const { data } = await axios.post(
-                `http://localhost:4000/api/all-jobs/${selectedJob.jobId}/apply`,
-                applicationData
+                `http://localhost:4000/api/jobs/apply`,
+                applicationData, {
+                params: {
+                    jobId: selectedJob.jobId,
+                    jobTitle: selectedJob.title
+                }
+            }
             );
             toast.success(data.message || "Application submitted successfully!");
             setApplicationData({ applicantName: '', applicantEmail: '', resume: '' });
@@ -124,7 +132,7 @@ const LandingPage = () => {
                               {/* User Avatar */}
                         <div className="relative">
                                 <img
-                                    // onClick={() => navigate('/auth/profile') }
+                                    onClick={() =>{ navigate('/auth/profile')} }
                                 src="images/user_logo.jpg" // Placeholder for user avatar
                                 alt="User Avatar"
                                 className="w-10 h-10 rounded-full border-2 border-white"
@@ -133,7 +141,7 @@ const LandingPage = () => {
                             </div>
                             <button
                               
-                                // onClick={ navigate('/auth/login')  }
+                                onClick={() => { navigate('/auth/login') } }
                                 className="bg-yellow-400 text-black  font-bold captilize px-6 py-1 rounded-md hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                             { localStorage.getItem('auth')=='true' ? 'logout' : 'login'}
                             </button>
@@ -178,6 +186,7 @@ const LandingPage = () => {
             <section className="py-12">
                 <div className="container mx-auto px-4">
                     <h2 className="text-2xl font-semibold text-center mb-6">Featured Jobs</h2>
+                    <ToastContainer position="top-right" />
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {jobs.map((job) => (
                             <div
